@@ -4,5 +4,8 @@ pragma solidity >=0.7.0 <0.9.0;
 contract Customer{
 
 	address private customer;
+	uint private money;
+	
+	
 
 }
