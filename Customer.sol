@@ -11,9 +11,9 @@ contract Payment{
         string location;
         uint payments;
     }
-    mapping(uint=>C_info) public Customers;
+    
     function StoreFirstName(string F) public {//Store First Name
-       Customers[index].Fname = F;//Error? Undeclared Identifier
+    	C_info.Fname=F;   
     }
     function UpdatePayments(uint C) public {
         
