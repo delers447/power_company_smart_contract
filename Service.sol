@@ -28,7 +28,7 @@ contract Provider{
         _;
     }
     function agreed() public {
-
+        agreement=true;
     }
 }
 
@@ -37,12 +37,19 @@ contract Power_providers is Provider{ //Company who provide power
     constructor(string memory provider_name, uint provider_ID, address providerAddress) Provider(provider_name,provider_ID,providerAddress) public {
 
     }
-    
+    function Power_Agreement() public only_Provider(){
+        uint wattage;
+        uint256 totalcost=wattage/6;
+        
+    }
 }
 
 contract Maintenance_provider is Provider{//Company who provides maintanence
     //Defining the constructor for maintenance provider
     constructor(string memory provider_name, uint provider_ID, address providerAddress) Provider(provider_name,provider_ID,providerAddress) public {}
+    function Maintenance_Agreement() public only_Provider(){
+
+    }
 }
 contract Government_People is Provider{//Company who provide authority to the company to check if this course of action is legal or not
     //Defining the constructor for Agency provider
@@ -51,6 +58,9 @@ contract Government_People is Provider{//Company who provide authority to the co
     modifier Only_Government_access(){//For functions that only can be run for government people only
         require(msg.sender == provider,"Only government official can have access to this");
         _;
+    }
+    function Government_People public Only_Government_access(){
+        
     }
 
 }
@@ -86,7 +96,10 @@ contract ServicemManagement{//This contract is the main contract where the agree
         //Maintanence company =Gives out agreement on Power company on the service based on the power company agreement
         //Government department seems agreement on both power and maintanence company and check if this activity is legal
         //Tenant either agree or disagree with this agreement from the previous agreements.
-	}
+        PowerCompany.Power_Agreement()
+        MaintanenceCompany.Maintenance_Agreement()
+
+    }
 
 	function Complete_service_agreement()public payable Tenant_Only(){//If all parties agree with the service agreement then Tenant will complete the transaction by transfer kc
 
