@@ -12,14 +12,14 @@ contract Payments{
         address payable who_to_be_paid;
 
     }
-    mapping(unit => Receipt) public receipt_by_number;
+    mapping(uint => Receipt) public receipt_by_number;
 
-    function make_receipt(address who_paid, address who_to_be_paid, string reason, unit amount) private payable{
-        require(payee != address(0));
-        require(payer != address(0));
+    function make_receipt(address payable who_paid, address payable who_to_be_paid, string memory reason, uint amount_to_be_paid) public {
+        require(who_to_be_paid != address(0));
+        require(who_paid != address(0));
         no_of_receipts++;
-        who_to_be_paid.transfer(amount)
-        receipt_by_number[no_of_receipts] = Receipt(no_of_receipts, reason, amount, now, payee, payer)
+        who_to_be_paid.transfer(amount_to_be_paid);
+        receipt_by_number[no_of_receipts] = Receipt(no_of_receipts, reason, amount_to_be_paid, now, who_paid, who_to_be_paid);
     }
 
 }
