@@ -19,7 +19,7 @@ contract Complaints {
     mapping (uint => complaint) public complaints_by_number;  // Creates an array of complaints
 
     modifier only_government_agency(){       // Makes sure only a goverment agency can use a function
-        require(msg.sender == _government_agency, "");
+        require(msg.sender == _government_agency, "You aren't authorize");
        _; 
     }
 
