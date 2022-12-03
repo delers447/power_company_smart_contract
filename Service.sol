@@ -7,6 +7,8 @@ service the tenant/Owner of the house hold
 
 //Created a parent contract called provider because the providers share the following attribute: CompanyName, ProviderID, ProviderTeam, and their tenants
 //Both Provider amd it's children are still under development until a new set of instructions are made.
+/*
+Igonore this commit for now 
 contract Provider{
     string providerName;//provider company name Ex: Electic co, FTC, Southern Maryland Electric Company, etc.
     uint internal providerID; //Provider id for information for the reciept
@@ -30,6 +32,7 @@ contract Provider{
     function agreed() public {
         agreement=true;
     }
+    
 }
 
 contract Power_providers is Provider{ //Company who provide power
@@ -37,71 +40,77 @@ contract Power_providers is Provider{ //Company who provide power
     constructor(string memory provider_name, uint provider_ID, address providerAddress) Provider(provider_name,provider_ID,providerAddress) public {
 
     }
-    function Power_Agreement() public only_Provider(){
-        uint wattage;
-        uint256 totalcost=wattage/6;
-        
-    }
+   
 }
 
 contract Maintenance_provider is Provider{//Company who provides maintanence
     //Defining the constructor for maintenance provider
     constructor(string memory provider_name, uint provider_ID, address providerAddress) Provider(provider_name,provider_ID,providerAddress) public {}
-    function Maintenance_Agreement() public only_Provider(){
 
-    }
 }
 contract Government_People is Provider{//Company who provide authority to the company to check if this course of action is legal or not
     //Defining the constructor for Agency provider
     constructor(string memory provider_name, uint provider_ID, address provider_Address) Provider(provider_name,provider_ID,provider_Address) public {}
-    
-    modifier Only_Government_access(){//For functions that only can be run for government people only
-        require(msg.sender == provider,"Only government official can have access to this");
-        _;
-    }
-    function Government_People public Only_Government_access(){
-        
-    }
+
 
 }
-contract ServicemManagement{//This contract is the main contract where the agreement will take place
-	struct Tenant{ //The tenant or owner of the house hold
-        address payable Tenantaddress;//Payments from the tenant for the service
-        string HousingAddress;// Housing Location
-        uint Wattage; //Wattage that have been used up this month 
-        uint timestamp;//Timestamped on when agreement have been requested
-        bool agreement;//Tenant agreement on providers charges on service.
-    }
-    Tenant Consumer; //Initalize the tenant
-    modifier Tenant_Only(){//A tenant only modifier for any functions that require only the tenant usage
-        require(msg.sender==Consumer.Tenantaddress);
-        _;
-    }
-    string PowerCompanyName;// Names for Power company, Maintanece company, and government department
-    string MaintanenceCompanyName;
-    string GovernmentDepartmentName;
-    uint PowerCompanyID; // ID for Power company, Maintanece company, and government department
-    uint MaintanenceCompanyID;
-    uint GovernmentDepartmentID;
-    address PowerCompanyAddress;// addresses for Power company, Maintanece company, and government department
-    address MaintanenceCompanyAddress;
-    address GovernmentDepartmentAddress;
+*/
+/*
+This contract is the main contract for service.sol
+Provider will enter an agreement message and index,
+client (recipiant) will see the message and either agree or disagree with the provider
+if the client agrees the transaction will execute
+*/
+contract ServicemManagement{
+    uint Serviceindex=0;//set service index to 0 in order to put more service information for later
+    uint public no_of_receipts;// same rule applies for no_of_recipts
 
-    Power_providers PowerCompany = new Power_providers(PowerCompanyName,PowerCompanyID,PowerCompanyAddress);//initalize Power company contract
-    Maintenance_provider MaintanenceCompany = new Maintenance_provider(MaintanenceCompanyName,MaintanenceCompanyID,MaintanenceCompanyAddress);//initalize Maintanence Company contract
-    Government_People GovernmentDepartment = new Government_People(GovernmentDepartmentName,GovernmentDepartmentID,GovernmentDepartmentAddress); //initalize Government department contract
-	
-    function Make_service_agreement()public {//All parties (Tenant, PowerCompany, MaintanenceCompany, and Government) must agree on the following conditions
-        //Power company = Gives out agreement on tenant to payment this criteria by giving out this much wattage
-        //Maintanence company =Gives out agreement on Power company on the service based on the power company agreement
-        //Government department seems agreement on both power and maintanence company and check if this activity is legal
-        //Tenant either agree or disagree with this agreement from the previous agreements.
-        PowerCompany.Power_Agreement()
-        MaintanenceCompany.Maintenance_Agreement()
+    struct Receipt{ //gathering information regarding reciept information for transactions from the client
+        uint receiptid;
+        string reason_for_payment;
+        uint amount_paid;
+        uint timestamp;
+        address payable client;
+        address payable provider;
 
     }
+    struct Serviceinfo{// information for what type of service and how much the service will cost
+        uint timestamp;
+        uint providersCost;
+        string agreementmessage;
+        bool recipiantAgreement;
+        address payable recipiant;
+        address payable provider;
+    }
+    
+    mapping(uint => Receipt) public receipt_by_number;//create an array for reciepts
+    mapping(uint=>Serviceinfo) public List_of_Service_agreement;//create an array for service information 
 
-	function Complete_service_agreement()public payable Tenant_Only(){//If all parties agree with the service agreement then Tenant will complete the transaction by transfer kc
+    function Make_service_agreement(uint index, string memory agreementmessage, uint cost)public {//This function 
+        List_of_Service_agreement[index].agreementmessage=agreementmessage;//Store agreement management in service information when called
+        List_of_Service_agreement[index].timestamp=now;//Get current time when Make service agreement when called
+        List_of_Service_agreement[index].provider=msg.sender; // provider will be the msg.sender when sending this agreement to the blockchain
+        List_of_Service_agreement[index].providersCost = cost;//enter in how much it would cost for the service
+    }
 
+    function Get_recipiant_agreement(uint index, bool agreement) public { //this function will allow the client to type true or false
+        List_of_Service_agreement[index].recipiantAgreement=agreement;
+    }
+    
+    function make_receipt(address payable client, address payable provider, string memory reason, uint amount_to_be_paid) private{//This function generate the reciept from the given agreement
+        require(provider != address(0));
+        require(client != address(0));
+        no_of_receipts++;
+        provider.transfer(amount_to_be_paid);
+        receipt_by_number[no_of_receipts] = Receipt(no_of_receipts, reason, amount_to_be_paid, now, client, provider);
+    }
+	function Complete_service_agreement(uint index)public payable//if recipient says true, make the transfers and reciepts
+    {
+        require(List_of_Service_agreement[index].recipiantAgreement==true);
+        //address payable Recipiant = List_of_Service_agreement[index].recipiant;
+        make_receipt(List_of_Service_agreement[index].recipiant,List_of_Service_agreement[index].provider, List_of_Service_agreement[index].agreementmessage, List_of_Service_agreement[index].providersCost);
+        
+       
 	}
 }
+
