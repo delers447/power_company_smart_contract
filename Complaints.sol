@@ -20,6 +20,7 @@ contract Complaints {
 
     modifier only_government_agency(){       // Makes sure only a goverment agency can use a function
         require(msg.sender == _government_agency, "You aren't authorize");
+        require (complaints_by_number[no_of_complaints].been_judged == false , "Already been judge") ;
        _; 
     }
 
