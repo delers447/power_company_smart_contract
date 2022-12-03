@@ -14,7 +14,7 @@ contract Payments{
     }
     mapping(uint => Receipt) public receipt_by_number;
 
-    function make_receipt(address payable who_paid, address payable who_to_be_paid, string memory reason, uint amount_to_be_paid) public {
+    function make_receipt(address payable who_paid, address payable who_to_be_paid, string memory reason, uint amount_to_be_paid) private {
         require(who_to_be_paid != address(0));
         require(who_paid != address(0));
         no_of_receipts++;
