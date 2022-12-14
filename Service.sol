@@ -5,56 +5,6 @@ This script will allow the providers to make an agreement to
 service the tenant/Owner of the house hold
 */
 
-//Created a parent contract called provider because the providers share the following attribute: CompanyName, ProviderID, ProviderTeam, and their tenants
-//Both Provider amd it's children are still under development until a new set of instructions are made.
-/*
-Igonore this commit for now 
-contract Provider{
-    string providerName;//provider company name Ex: Electic co, FTC, Southern Maryland Electric Company, etc.
-    uint internal providerID; //Provider id for information for the reciept
-    address internal provider; //Provider hash key
-    bool agreement;//Provider agreement under condition
-    constructor (string memory provider_name, uint provider_ID, address providerA) public {//When provider is created set attributes of the provider in the system
-        providerName=provider_name;
-        providerID=provider_ID;
-        provider=providerA;
-    }
-    modifier not_Provider(){//This is a modifier for only the tenants having access to functionalities of a contract
-        require(msg.sender!=provider, "Only tenants can access this");
-        _;
-    }
-
-    modifier only_Provider(){//This modifier for only having the provider to access functionalities of a contract
-        string memory message= string(abi.encodePacked("Only the ",providerName," can access this"));
-        require(msg.sender==provider, message);
-        _;
-    }
-    function agreed() public {
-        agreement=true;
-    }
-    
-}
-
-contract Power_providers is Provider{ //Company who provide power
-    //Defining the constructor for power provider
-    constructor(string memory provider_name, uint provider_ID, address providerAddress) Provider(provider_name,provider_ID,providerAddress) public {
-
-    }
-   
-}
-
-contract Maintenance_provider is Provider{//Company who provides maintanence
-    //Defining the constructor for maintenance provider
-    constructor(string memory provider_name, uint provider_ID, address providerAddress) Provider(provider_name,provider_ID,providerAddress) public {}
-
-}
-contract Government_People is Provider{//Company who provide authority to the company to check if this course of action is legal or not
-    //Defining the constructor for Agency provider
-    constructor(string memory provider_name, uint provider_ID, address provider_Address) Provider(provider_name,provider_ID,provider_Address) public {}
-
-
-}
-*/
 /*
 This contract is the main contract for service.sol
 Provider will enter an agreement message and index,
@@ -82,15 +32,32 @@ contract ServicemManagement{
         address payable recipiant;
         address payable provider;
     }
-    
+    struct Provider{
+        string providerName;//provider company name Ex: Electic co, FTC, Southern Maryland Electric Company, etc.
+        uint internal providerID; //Provider id for information for the reciept
+        address internal provider; //Provider hash key
+        uint cost;
+        bool agreement;//Provider agreement under condition
+        string providermessage;
+        
+    }
     mapping(uint => Receipt) public receipt_by_number;//create an array for reciepts
     mapping(uint=>Serviceinfo) public List_of_Service_agreement;//create an array for service information 
+    mapping(uint=>Provider) public List_of_Providers;//
 
+    function sign_up_as_provider(string memory ProviderName, uint ProivderID, uint cost)public {
+        Serviceindex++;
+        List_of_Providers[Serviceindex].providerName=ProviderName;
+        List_of_Providers[Serviceindex].provider=msg.sender;
+        List_of_Providers[Serviceindex].cost=cost;
+    }
     function Make_service_agreement(uint index, string memory agreementmessage, uint cost)public {//This function 
+        require(Serviceindex>0);
         List_of_Service_agreement[index].agreementmessage=agreementmessage;//Store agreement management in service information when called
         List_of_Service_agreement[index].timestamp=now;//Get current time when Make service agreement when called
-        List_of_Service_agreement[index].provider=msg.sender; // provider will be the msg.sender when sending this agreement to the blockchain
+        List_of_Service_agreement[index].recipiant=msg.sender; // provider will be the msg.sender when sending this agreement to the blockchain
         List_of_Service_agreement[index].providersCost = cost;//enter in how much it would cost for the service
+        List_of_Service_agreement[index].provider=List_of_Providers[Serviceindex];
     }
 
     function Get_recipiant_agreement(uint index, bool agreement) public { //this function will allow the client to type true or false
@@ -109,7 +76,6 @@ contract ServicemManagement{
         require(List_of_Service_agreement[index].recipiantAgreement==true);
         //address payable Recipiant = List_of_Service_agreement[index].recipiant;
         make_receipt(List_of_Service_agreement[index].recipiant,List_of_Service_agreement[index].provider, List_of_Service_agreement[index].agreementmessage, List_of_Service_agreement[index].providersCost);
-        
        
 	}
 }
