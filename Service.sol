@@ -58,6 +58,7 @@ contract ServicemManagement{
         List_of_Service_agreement[index].recipiant=msg.sender; // provider will be the msg.sender when sending this agreement to the blockchain
         List_of_Service_agreement[index].providersCost = cost;//enter in how much it would cost for the service
         List_of_Service_agreement[index].provider=List_of_Providers[Serviceindex];
+    	//ERROR FOR THE LINE ABOVE.  Mismatched types.  Also, where is the Serviceindex defined?
     }
 
     function Get_recipiant_agreement(uint index, bool agreement) public { //this function will allow the client to type true or false
