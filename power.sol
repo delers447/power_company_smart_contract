@@ -51,7 +51,7 @@ contract Power{
     }
 
     function make_receipt(address payable currentCustomer, address payable powerProvider, string memory reason, uint monthlyPayment) 
-        private {
+        private  {
             require(powerProvider != address(0));
             require(currentCustomer != address(0));
             no_of_receipts++;
@@ -71,7 +71,11 @@ contract Power{
 
     function pay_for_power(uint _index) public payable{
         require (PowerAgreement_by_No[_index].currently_active, "Agreement is not currently active.");
-        make_receipt(msg.sender, PowerAgreement_by_No[_index].powerProvider, "Monthly Payment", PowerAgreement_by_No[_index].monthlyPayment);
+        //make_receipt(msg.sender, PowerAgreement_by_No[_index].powerProvider, "Monthly Payment", PowerAgreement_by_No[_index].monthlyPayment);
+        no_of_receipts++;
+        receipt_by_number[no_of_receipts] = Receipt(no_of_receipts, "Monthly Payment",PowerAgreement_by_No[_index].monthlyPayment,now,msg.sender, PowerAgreement_by_No[_index].powerProvider);
+        PowerAgreement_by_No[_index].powerProvider.transfer(PowerAgreement_by_No[_index].monthlyPayment);
+
     }
     function terminate(uint _index) public {
         require (PowerAgreement_by_No[_index].currently_active, "Agreement is not currently active.");
