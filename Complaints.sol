@@ -1,4 +1,4 @@
-pragma solidity 0.5.16;
+pragma solidity ^0.5.16;
 
 contract Complaints {
    
@@ -37,7 +37,7 @@ contract Complaints {
         complaints_by_number[complaintindex] = complaint (message,"none",false,now,0,msg.sender,address(0));
     }
 
-      function make_JudgementByPassing(string memory message) public only_government_agency  {   
+      function make_JudgementByPassing(uint index, string memory message) public only_government_agency  {   
           // Adds a judgement to a complaint array along with the time of the judgment a true value to the been judged boolean and the address of the judge.
           // Message essentaily a call in that allows the users to write a string into the function in the judge string
           // Applies the modifier only_government_agency which prevents address not registered as a goverment agency from using this function
