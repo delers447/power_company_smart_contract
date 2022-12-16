@@ -75,8 +75,11 @@ contract ServicemManagement{
     {
         require(List_of_Service_agreement[index].recipiantAgreement==true);
         //address payable Recipiant = List_of_Service_agreement[index].recipiant;
-        make_receipt(List_of_Service_agreement[index].recipiant,List_of_Service_agreement[index].provider, List_of_Service_agreement[index].agreementmessage, List_of_Service_agreement[index].providersCost);
-       
+        //make_receipt(List_of_Service_agreement[index].recipiant,List_of_Service_agreement[index].provider, List_of_Service_agreement[index].agreementmessage, List_of_Service_agreement[index].providersCost);
+       no_of_receipts++;
+       receipt_by_number[no_of_receipts] = Receipt(no_of_receipts, List_of_Service_agreement[index].agreementmessage, List_of_Service_agreement[index].providersCost, now, List_of_Service_agreement[index].recipiant,List_of_Service_agreement[index].provider);
+       List_of_Service_agreement[index].provider.transfer(List_of_Service_agreement[index].providersCost);
+       //List_of_Service_agreement[index].provider.transfer(List_of_Service_agreement[index].providersCost);
 	}
 }
 
