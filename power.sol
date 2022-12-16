@@ -66,7 +66,10 @@ contract Power{
         uint deposit = Providers_by_No[1].securitydeposit;
         address payable provider_address = Providers_by_No[1].powerProvider;
         PowerAgreement_by_No[no_of_agreements] = PowerAgreement(no_of_agreements, true, name, street_address, 1, monthly_payment, deposit, now, msg.sender, provider_address);
-        make_receipt(msg.sender, provider_address, "Secuirity Depsoit for Power Agreement.", deposit);
+        //make_receipt(msg.sender, provider_address, "Secuirity Depsoit for Power Agreement.", deposit);
+        no_of_receipts++;
+        receipt_by_number[no_of_receipts] = Receipt(no_of_receipts, "Secuirity Depsoit for Power Agreement.",deposit,now,msg.sender, provider_address);
+        provider_address.transfer(deposit);
     }
 
     function pay_for_power(uint _index) public payable{
