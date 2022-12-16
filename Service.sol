@@ -34,8 +34,8 @@ contract ServicemManagement{
     }
     struct Provider{
         string providerName;//provider company name Ex: Electic co, FTC, Southern Maryland Electric Company, etc.
-        uint internal providerID; //Provider id for information for the reciept
-        address internal provider; //Provider hash key
+        uint providerID; //Provider id for information for the reciept
+        address payable provider; //Provider hash key
         uint cost;
         bool agreement;//Provider agreement under condition
         string providermessage;
@@ -45,7 +45,7 @@ contract ServicemManagement{
     mapping(uint=>Serviceinfo) public List_of_Service_agreement;//create an array for service information 
     mapping(uint=>Provider) public List_of_Providers;//
 
-    function sign_up_as_provider(string memory ProviderName, uint ProivderID, uint cost)public {
+    function sign_up_as_provider(string memory ProviderName, uint cost) public {
         Serviceindex++;
         List_of_Providers[Serviceindex].providerName=ProviderName;
         List_of_Providers[Serviceindex].provider=msg.sender;
@@ -57,7 +57,7 @@ contract ServicemManagement{
         List_of_Service_agreement[index].timestamp=now;//Get current time when Make service agreement when called
         List_of_Service_agreement[index].recipiant=msg.sender; // provider will be the msg.sender when sending this agreement to the blockchain
         List_of_Service_agreement[index].providersCost = cost;//enter in how much it would cost for the service
-        List_of_Service_agreement[index].provider=List_of_Providers[Serviceindex];
+        List_of_Service_agreement[index].provider=List_of_Providers[Serviceindex].provider;
     	//ERROR FOR THE LINE ABOVE.  Mismatched types.  Also, where is the Serviceindex defined?
     }
 
